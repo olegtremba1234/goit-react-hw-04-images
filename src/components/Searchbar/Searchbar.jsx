@@ -1,31 +1,28 @@
-import React, { Component } from "react";
+import { useState } from "react";
 import PropTypes from "prop-types"
 import style from "./Searchbar.module.css"
 import { ReactComponent as SearchIcon } from "./search.svg";
 import { Notify } from "notiflix";
 
-export default class Searchbar extends Component {
-  state = { searchQuery: '' }
+const Searchbar = ({ onSubmit }) => {
+  const [searchQuery, setSearchQuery] = useState('')
 
-  handleChange = e => {
-    this.setState({ searchQuery: e.currentTarget.value.toLowerCase() })
+  const handleChange = e => {
+    const { value } = e.target
+    setSearchQuery(value)
   };
 
-  handleSubmit = e => {
+  const handleSubmit = e => {
     e.preventDefault();
-    const query = this.state.searchQuery.trim();
-
-    if (query === '') {
+    if (searchQuery.trim() === '') {
       return Notify.warning("Введіть дані для запиту!")
     }
-
-    this.props.onSubmit(query);
+    onSubmit(searchQuery);
   };
 
-  render() {
     return (
       <header className={style.Searchbar}>
-        <form className={style.form} onSubmit={this.handleSubmit}>
+        <form className={style.form} onSubmit={handleSubmit}>
           <button type="submit" className={style.button}>
             <SearchIcon width="20" height="20" />
             <span className={style.label}>Search</span>
@@ -36,15 +33,17 @@ export default class Searchbar extends Component {
             autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
-            value={this.state.searchQuery}
-            onChange={this.handleChange}
+            value={searchQuery}
+            onChange={handleChange}
           />
         </form>
       </header>
 
     )
-  }
+  
 }
+
+export default Searchbar;
 
 Searchbar.propTypes = {
   onSubmit: PropTypes.func.isRequired
